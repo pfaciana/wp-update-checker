@@ -1,0 +1,38 @@
+{
+	"name": "pfaciana/wp-update-checker",
+	"version": "1.0.0",
+	"description": "Update Plugins for external sources",
+	"keywords": [],
+	"homepage": "https://renderdev.com/",
+	"license": "GPL-2.0-only",
+	"authors": [
+		{
+			"name": "Phil Faciana",
+			"email": "phil@renderdev.com",
+			"homepage": "https://renderdev.com/",
+			"role": "Developer"
+		}
+	],
+	"extra": {
+		"wordpress": {
+			"Plugin Name": "WP Package Update Checker",
+			"Remote File": "composer.json",
+			"Release Asset": "wp-update-checker.zip",
+			"Requires at least": "6.4",
+			"License": "GPLv2 only",
+			"License URI": "https://www.gnu.org/licenses/old-licenses/gpl-2.0.html"
+		}
+	},
+	"autoload": {
+		"psr-4": {
+			"PackageUpgrader\\V1\\": "src/"
+		},
+		"files": [
+			"./load.php"
+		]
+	},
+	"require-dev": {},
+	"require": {
+		"erusev/parsedown": "^1.7"
+	}
+}

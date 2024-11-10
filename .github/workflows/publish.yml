@@ -1,0 +1,113 @@
+name: Publish
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+
+jobs:
+  sync-versions:
+    runs-on: ubuntu-20.04
+    outputs:
+      tag-name: ${{ steps.sync_versions.outputs.tag-name }}
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history for all branches and tags
+          fetch-tags: true  # Fetch all tags
+
+      - name: Sync Versions
+        id: sync_versions
+        uses: pfaciana/version-sync@v1
+        with:
+          json-files: composer.json
+          release-type: patch
+          commit-message: Update version to {version}
+          tag-message: Release {tag}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEBUG_MODE: ${{ vars.DEBUG_MODE || '0' }}
+
+  get-tag-name:
+    needs: sync-versions
+    runs-on: ubuntu-20.04
+    outputs:
+      tag-name: ${{ steps.get_tag_name.outputs.tag-name }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Get tag
+        id: get_tag_name
+        uses: pfaciana/get-tag-for-next-release@v1
+        with:
+          match-tag: ${{ needs.sync-versions.outputs.tag-name || '' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEBUG_MODE: ${{ vars.DEBUG_MODE || '0' }}
+
+  create-release:
+    needs: get-tag-name
+    if: needs.get-tag-name.outputs.tag-name != ''
+    runs-on: ubuntu-20.04
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history for all branches and tags
+          fetch-tags: true  # Fetch all tags
+
+      - name: Create Changelog
+        id: create_changelog
+        uses: pfaciana/conventional-commits-changelog@v1
+        with:
+          file: CHANGELOG.md
+          desc-header: true
+          options: |
+            {"types":{"feat_add":"📢 Added","feat_change":"⚡ Changed","feat_remove":"🗑️ Removed","fix":"🐞 Fixed"},"notice":{"keys":{"🚨 BREAKING CHANGES":"/^BREAKING[ -]CHANGE$/"}}}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEBUG_MODE: ${{ vars.DEBUG_MODE || '0' }}
+
+      - name: Create Developer Changelog
+        id: create_developer_changelog
+        uses: pfaciana/conventional-commits-changelog@v1
+        with:
+          file: DEVELOPER_CHANGELOG.md
+          desc-header: true
+          options: |
+            {"types":{"feat_add":"📢 Added","feat_change":"⚡ Changed","feat_remove":"🗑️ Removed","fix":"🐞 Fixed","docs":"📚 Documented","test":"🧪 Tested","build":"📦 Built","ci":"🔗 CI","refactor":"🏗️ Refactored","style":"🎨 Styled","perf":"🚀 Performance","chore":"🧹 Chores"},"notice":{"keys":{"🚨 BREAKING CHANGES":"/^BREAKING[ -]CHANGE$/"}}}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEBUG_MODE: ${{ vars.DEBUG_MODE || '0' }}
+
+      - name: Create Release Changelog
+        id: create_release_changelog
+        uses: pfaciana/conventional-commits-changelog@v1
+        with:
+          options: |
+            {"types":{"feat_add":"📢 Added","feat_change":"⚡ Changed","feat_remove":"🗑️ Removed","fix":"🐞 Fixed","docs":"📚 Documented","test":"🧪 Tested","build":"📦 Built","ci":"🔗 CI","refactor":"🏗️ Refactored","style":"🎨 Styled","perf":"🚀 Performance","chore":"🧹 Chores"},"notice":{"keys":{"🚨 BREAKING CHANGES":"/^BREAKING[ -]CHANGE$/"}},"onlyFirst":true,"onlyBody":true}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEBUG_MODE: ${{ vars.DEBUG_MODE || '0' }}
+
+      - name: Create Release
+        id: create_release
+        uses: pfaciana/wordpress-release@v1
+        with:
+          main-file: index.php
+          zip-ignore: .gitattributes
+          release-tag: ${{ needs.get-tag-name.outputs.tag-name }}
+          release-body: ${{ steps.create_release_changelog.outputs.changelog }}
+          additional-files: |
+            CHANGELOG.md
+            DEVELOPER_CHANGELOG.md
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEBUG_MODE: ${{ vars.DEBUG_MODE || '0' }}

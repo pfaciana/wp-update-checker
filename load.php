@@ -9,5 +9,7 @@ add_action( 'init', function () {
 	if ( basename( $dir = dirname( __DIR__ ) ) !== 'pfaciana' && basename( dirname( $dir ) ) !== 'vendor' ) {
 		new PackageUpgrader\V1\Plugin;
 	}
-	do_action( 'rpuc/init' );
+	if ( !did_action( 'rpuc/init' ) ) {
+		do_action( 'rpuc/init' );
+	}
 }, -99 );

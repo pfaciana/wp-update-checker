@@ -78,3 +78,15 @@ In addition to the standard WordPress metadata comments, it also supports a few 
 | Primary Branch    | Primary branch name                                                             | `master` (default)                               |
 | Release Asset     | Relative URL to the zip file for download                                       | `wp-plugin.zip` (defaults to release source zip) |
 | Remote File       | The relative file path to the plugin or theme file that has the header comments | `index.php` (defaults to main file)              |
+
+## Composer Smart Autoloader
+
+This projects also comes with `Composer Smart Autoloader` installed as a dependency, but in order to take advantage of it you'll need to init it in your own code like this:
+
+```php
+add_action( 'plugins_loaded', function () {
+	\Render\Autoload\ClassLoader::getInstance();
+}, PHP_INT_MIN );
+```
+
+For more details on what Composer Smart Autoloader is and how to use it, see [Composer Smart Autoloader](https://github.com/pfaciana/composer-smart-autoloader).

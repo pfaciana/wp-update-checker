@@ -5,10 +5,6 @@ if ( !defined( 'WP_THEME_DIR' ) ) {
 }
 
 add_action( 'init', function () {
-	// Do not run the upgrader on this package if it's installed via composer
-	if ( basename( $dir = dirname( __DIR__ ) ) !== 'pfaciana' && basename( dirname( $dir ) ) !== 'vendor' ) {
-		new PackageUpgrader\V1\Plugin;
-	}
 	if ( !did_action( 'rpuc/init' ) ) {
 		do_action( 'rpuc/init' );
 	}

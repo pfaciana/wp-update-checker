@@ -8,7 +8,7 @@ on:
 
 jobs:
   sync-versions:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     outputs:
       tag-name: ${{ steps.sync_versions.outputs.tag-name }}
     permissions:
@@ -34,7 +34,7 @@ jobs:
 
   get-tag-name:
     needs: sync-versions
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     outputs:
       tag-name: ${{ steps.get_tag_name.outputs.tag-name }}
     steps:
@@ -53,7 +53,7 @@ jobs:
   create-release:
     needs: get-tag-name
     if: needs.get-tag-name.outputs.tag-name != ''
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:

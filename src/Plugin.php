@@ -67,6 +67,8 @@ class Plugin extends AbstractPackage
 	 */
 	public function check_update_plugin ( object $transient ): object
 	{
+		global $wpdb;
+
 		if ( empty( $transient->checked ) ) {
 			return $transient;
 		}
@@ -75,7 +77,13 @@ class Plugin extends AbstractPackage
 		$this->remote->set_props();
 
 		if ( version_compare( $this->local->version, $this->remote?->new_version ?? NULL, '<' ) ) {
-			$transient->response[$this->local->id] = $this->remote;
+			$remote = json_decode( json_encode( $this->remote ) );
+			foreach ( $remote as &$value ) {
+				if ( is_string( $value ) ) {
+					$value = $wpdb->strip_invalid_text_for_column( $wpdb->options, 'option_value', $value );
+				}
+			}
+			$transient->response[$this->local->id] = $remote;
 		}
 		else {
 			unset( $transient->response[$this->local->id] );

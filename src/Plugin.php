@@ -137,7 +137,7 @@ class Plugin extends AbstractPackage
 	 *
 	 * @return string The HTML string for the Thickbox metadata link.
 	 */
-	public function get_thickbox_metadata_link ( string $section_key, string $section_text = NULL ): string
+	public function get_thickbox_metadata_link ( string $section_key, ?string $section_text = NULL ): string
 	{
 		return sprintf( //
 			'<a href="%s" class="thickbox open-plugin-details-modal" aria-label="%s" data-title="%s">%s</a>', //

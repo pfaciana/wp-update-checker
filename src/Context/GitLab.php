@@ -226,10 +226,10 @@ class GitLab extends AbstractRemote
 			ob_start();
 			?>
 			<div class="changelog-release">
-				<h2><?= $release->tag_name ?> (<?= $published_at->format( 'Y-m-d' ) ?>)</h2>
-				<p><strong><?= $release->name ?></strong></p>
-				<div><?= $release->description ?></div>
-				<p><a href="<?= $release->_links->self ?>" target="_blank">View Release for <?= $release->tag_name ?></a></p>
+				<h2><?= esc_html( $release->tag_name ) ?> (<?= $published_at->format( 'Y-m-d' ) ?>)</h2>
+				<p><strong><?= esc_html( $release->name ) ?></strong></p>
+				<div><?= wp_kses_post( $release->description ) ?></div>
+				<p><a href="<?= esc_url( $release->_links->self ) ?>" target="_blank">View Release for <?= esc_html( $release->tag_name ) ?></a></p>
 			</div>
 			<?php
 			$content[] = ob_get_clean();
@@ -254,7 +254,7 @@ class GitLab extends AbstractRemote
 
 		ob_start();
 		?>
-		<h1><strong><?= $release->name ?></strong></h1>
+		<h1><strong><?= esc_html( $release->name ) ?></strong></h1>
 		<?= $release->description ?>
 		<?php
 

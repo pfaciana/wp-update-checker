@@ -182,15 +182,15 @@ abstract class AbstractPackage
 				                </th>
 				                <td style="display:block;padding:4px 0">
 				                    <p>
-				                        <input type="text" id="api_token" name="api_token" title="<?= $api_placeholder ?>" placeholder="<?= $api_placeholder ?>" value="" style="width:100%;padding:3px 10px" />
-				                        <input type="hidden" name="plugin_id" value="<?= $this->local->folder ?>" />
+				                        <input type="text" id="api_token" name="api_token" title="<?= esc_attr($api_placeholder) ?>" placeholder="<?= esc_attr($api_placeholder) ?>" value="" style="width:100%;padding:3px 10px" />
+				                        <input type="hidden" name="plugin_id" value="<?= esc_attr($this->local->folder) ?>" />
 				                    </p>
 				                </td>
 				            </tr>
 				        </table>
-				        <?= get_submit_button( "{$save_verb} API Token", 'primary', strtolower( $save_verb ), FALSE ) ?>
+				        <?= get_submit_button( esc_html("{$save_verb} API Token"), 'primary', strtolower( $save_verb ), FALSE ) ?>
 				        <span id="api-token-remove" style="display: <?= $api_token ? 'inline' : 'none' ?>">
-				            <?= get_submit_button( "Remove API Token", 'secondary', 'remove', FALSE ) ?>
+				            <?= get_submit_button( esc_html("Remove API Token"), 'secondary', 'remove', FALSE ) ?>
 				        </span>
 				        <br><span id="api-token-message"></span>
 				    </form>

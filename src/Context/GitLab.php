@@ -222,7 +222,7 @@ class GitLab extends AbstractRemote
 
 		foreach ( $releases as $release ) {
 			$published_at = new \DateTime( $release->released_at, new \DateTimeZone( 'UTC' ) );
-			$published_at->setTimezone( new \DateTimeZone( get_option( 'timezone_string' ) ) );
+			$published_at->setTimezone( new \DateTimeZone( wp_timezone_string() ) );
 			ob_start();
 			?>
 			<div class="changelog-release">
@@ -250,7 +250,7 @@ class GitLab extends AbstractRemote
 		}
 
 		$published_at = new \DateTime( $release->released_at, new \DateTimeZone( 'UTC' ) );
-		$published_at->setTimezone( new \DateTimeZone( get_option( 'timezone_string' ) ) );
+		$published_at->setTimezone( new \DateTimeZone( wp_timezone_string() ) );
 
 		ob_start();
 		?>

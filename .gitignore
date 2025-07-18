@@ -1,5 +1,6 @@
 # ignore environment settings
 .idea
+.kiro
 
 # ignore dependency directories
 node_modules
